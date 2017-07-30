@@ -1,0 +1,13 @@
+[Unit]
+Description=Docker - Roon Server
+After=docker.service
+Requires=network-online.target docker.service
+
+[Service]
+#User=roon
+#WorkingDirectory=/home/roon
+#ExecStart=/usr/bin/docker run --name RoonServer --net=host -d -v /home/roon/docker-roonserver:/var/roon -v /mnt/music:/music mikedickey/roonserver
+ExecStart=/usr/bin/docker start RoonServer
+
+[Install]
+WantedBy=multi-user.target
