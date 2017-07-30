@@ -1,0 +1,13 @@
+[Unit]
+Description=NodeJS :: Roon Extension Manager
+After=docker-roonserver.service
+Requires=docker-roonserver.service
+
+[Service]
+User=roon
+Type=forking
+WorkingDirectory=/home/roon/RoonExtensions/lib/node_modules/roon-extension-manager
+ExecStart=/usr/bin/node start.js
+
+[Install]
+WantedBy=multi-user.target
