@@ -1,0 +1,12 @@
+[Unit]
+Description=NodeJS app - Roon Web Controller
+After=docker-roonserver.service
+Requires=docker-roonserver.service
+
+[Service]
+User=roon
+WorkingDirectory=/home/roon/RoonExtensions/lib/node_modules/roon-web-controller
+ExecStart=/usr/bin/node app.js
+
+[Install]
+WantedBy=multi-user.target
