@@ -75,7 +75,7 @@ then
 			echo ">>> Install Roon Server..."
 			sudo curl -O http://download.roonlabs.com/builds/roonserver-installer-linuxx64.sh
 			sudo chmod +x roonserver-installer-linuxx64.sh
-			sudo ./roonserver-installer-linuxx64.sh
+			sudo printf "y\ny\n" | ./roonserver-installer-linuxx64.sh && tail -f /dev/null 
 			sudo rm -f roonserver-installer-linuxx64.sh
 			
 			echo ""
