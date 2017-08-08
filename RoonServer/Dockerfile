@@ -14,13 +14,18 @@ ENV ROON_INSTALLER_URL http://download.roonlabs.com/builds/${ROON_INSTALLER}
 ENV ROON_DATAROOT /var/roon
 ENV ROON_ID_DIR /var/roon
 
-# Install prerequisite packages
+# Install prerequisite packages for FEDORA / CENTOS
 RUN dnf update \
 	&& dnf install -y curl bzip2 libav-tools cifs-utils libasound2 \
-  && dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-  && dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+	&& dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+	&& dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
 	&& dnf update \
-  && dnf install -y ffmpeg alsa-utils glibc
+	&& dnf install -y ffmpeg alsa-utils glibc
+  
+# Install prerequisite packages For DEBIAN / UBUNTU
+RUN apt-get update \
+	&& apt-get install -y curl bzip2 libasound2 \
+	&& apt-get clean && apt-get autoclean
 
 # Grab installer and script to run it
 ADD ${ROON_INSTALLER_URL} /tmp
