@@ -7,7 +7,7 @@ echo "
 # Name	  : Roon Labs RT Audiophile Orientation / Auto-Install
 #
 # Author  : LittleScarabee
-# Version : 2.0 / 09-AUG-2017
+# Version : 2.1 / 09-AUG-2017
 #
 # Step 3 - Description :
 #  1 / Install RoonServer (Server & Dependancies & Extensions Manager)
@@ -75,7 +75,7 @@ then
 			echo ">>> Install Roon Server..."
 			sudo curl -O http://download.roonlabs.com/builds/roonserver-installer-linuxx64.sh
 			sudo chmod +x roonserver-installer-linuxx64.sh
-			sudo printf "y\ny\n" | ./roonserver-installer-linuxx64.sh && tail -f /dev/null 
+			sudo ./roonserver-installer-linuxx64.sh
 			sudo rm -f roonserver-installer-linuxx64.sh
 			
 			echo ""
@@ -139,7 +139,7 @@ then
 			echo ""
 			sudo curl -O http://download.roonlabs.com/builds/roonbridge-installer-linuxx64.sh
 			sudo chmod +x roonbridge-installer-linuxx64.sh
-			sudo printf "y\ny\n" | ./roonbridge-installer-linuxx64.sh && tail -f /dev/null
+			sudo ./roonbridge-installer-linuxx64.sh
 			sudo rm -f roonbridge-installer-linuxx64.sh
 			
         else
