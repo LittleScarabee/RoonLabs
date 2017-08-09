@@ -139,7 +139,7 @@ then
 			echo ""
 			sudo curl -O http://download.roonlabs.com/builds/roonbridge-installer-linuxx64.sh
 			sudo chmod +x roonbridge-installer-linuxx64.sh
-			sudo ./roonbridge-installer-linuxx64.sh
+			sudo printf "y\ny\n" | ./roonbridge-installer-linuxx64.sh && tail -f /dev/null
 			
         else
         	
