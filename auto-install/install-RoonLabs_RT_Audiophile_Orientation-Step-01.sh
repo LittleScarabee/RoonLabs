@@ -7,7 +7,7 @@ echo "
 # Name:  Roon Labs RT Audiophile Orientation / Auto-Install
 # 
 # Author  : LittleScarabee
-# Version : 1.0 / 2017-07-23
+# Version : 2.0 / 09-AUG-17
 #
 # Step 1 - Description :
 #  1 / Give grant access to user (ie: $(whoami))
@@ -162,9 +162,10 @@ then
         STEP_STATUS=0
         echo "$NOW      STEP_$STEP_ID        $STEP_STATUS">>$FILE_LOG
 
-        # Script                        
-        dnf provides ifconfig
-		sudo dnf install -y net-tools system-config-network
+        # Script
+	#sudo dnf install system-config-network
+        #dnf provides ifconfig
+	sudo dnf install -y net-tools 
 
         # LOG
         NOW=$(date +"%Y-%m-%d %T")
