@@ -7,7 +7,7 @@ echo "
 # Name	  : Roon Labs RT Audiophile Orientation / Auto-Install
 #
 # Author  : LittleScarabee
-# Version : 1.2 / 08-AUG-2017
+# Version : 2.0 / 09-AUG-2017
 #
 # Step 3 - Description :
 #  1 / Install RoonServer (Server & Dependancies & Extensions Manager)
