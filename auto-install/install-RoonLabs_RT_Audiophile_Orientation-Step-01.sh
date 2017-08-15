@@ -7,12 +7,12 @@ echo "
 # Name:  Roon Labs RT Audiophile Orientation / Auto-Install
 # 
 # Author  : LittleScarabee
-# Version : 2.0 / 09-AUG-17
+# Version : 2.1 / 15-AUG-17
 #
 # Step 1 - Description :
 #  1 / Give grant access to user (ie: $(whoami))
 #  2 / Add more repositories
-#  3 / Install Network Tools
+#  3 / Install Network Tools and other tools
 #  4 / Disabled Firewall
 #  5 / Desabled  SELinux
 #  6 / Reboot
@@ -138,9 +138,9 @@ fi
 
 echo "
 
-# ------------------------------- #
-# 3/6 | Install Network Tools     #
-# ------------------------------- #"
+# ----------------------------------------------- #
+# 3/6 | Install Network Tools and Other tools     #
+# ----------------------------------------------- #"
 # Get last step executed
 STEP_ID=3
 STEP_LAST=$(cat $FILE_LOG | grep STEP_$STEP_ID | tail -1 | awk '{ print $3; }')
@@ -165,7 +165,7 @@ then
         # Script
 	#sudo dnf install system-config-network
         #dnf provides ifconfig
-	sudo dnf install -y net-tools 
+	sudo dnf install -y net-tools htop vim tar bzip2
 
         # LOG
         NOW=$(date +"%Y-%m-%d %T")
