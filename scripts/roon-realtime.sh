@@ -8,19 +8,22 @@ PROC_APPLIANCE="RoonAppliance"
 
 # Options
 STR_HELP="
-How to use this script : 
- roon-realtime.sh PARAMETERS OPTIONS
+How to use this script : roon-realtime.sh PARAMETERS OPTIONS
 
-Example for Server: roon-realtime.sh -p 99 -m FIFO -s y -a y -r y 
-Example for Brige: roon-realtime.sh -p 99 -m FIFO -b y -a y -r y 
+Example for Server: 
+  * roon-realtime.sh -p 99 -m FIFO -s y -a y -r y (put all process in RT)
+  * roon-realtime.sh -p 99 -m FIFO -a y -r y (put only process RAATServer and RoonAppliance in RT)
 
- * Options (At least one of them)
+Example for Brige [b](never tested)[/b]
+  * roon-realtime.sh -p 99 -m FIFO -b y -a y -r y 
+
+OPTIONS (At least one of them)
  s = Server
  a = Appliance
  r = RAAT
  b = Bridge
 
- * Parameters
+PARAMETERS :
  m = Scheduling >> {FIFO|RR}
  p = Priority   >> {0-99}
 "
