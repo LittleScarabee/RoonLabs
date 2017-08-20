@@ -1,0 +1,13 @@
+[Unit]
+Description=Realtime Process for RoonLabs
+After=roonserver.service
+Requires=roonserver.service 
+
+[Service]
+User=root
+Type=forking
+WorkingDirectory=/opt/RoonServer
+ExecStart=/usr/bin/sh roon-realtime.sh -p 99 -m FIFO -a y -r y 
+
+[Install]
+WantedBy=multi-user.target
