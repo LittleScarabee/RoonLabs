@@ -6,24 +6,28 @@ PROC_BRIDGE="RoonBridge"
 PROC_RAAT="RAATServer"
 PROC_APPLIANCE="RoonAppliance"
 
+# Log File
+STR_LOG="/var/log/roon-realtime.log"
+echo "- - - - " > $STR_LOG
+echo "## Date : $( date +'%D %r' )" >> $STR_LOG
+echo "## User : $( whoami )" >> $STR_LOG
+echo "- - - - " >> $STR_LOG
+
 # Options
 STR_HELP="
-How to use this script : roon-realtime.sh PARAMETERS OPTIONS
+How to use this script : 
+ roon-realtime.sh PARAMETERS OPTIONS
 
-Example for Server: 
-  * roon-realtime.sh -p 99 -m FIFO -s y -a y -r y (put all process in RT)
-  * roon-realtime.sh -p 99 -m FIFO -a y -r y (put only process RAATServer and RoonAppliance in RT)
+Example for Server: roon-realtime.sh -p 99 -m FIFO -s y -a y -r y 
+Example for Brige: roon-realtime.sh -p 99 -m FIFO -b y -a y -r y 
 
-Example for Brige [b](never tested)[/b]
-  * roon-realtime.sh -p 99 -m FIFO -b y -a y -r y 
-
-OPTIONS (At least one of them)
+ * Options (At least one of them)
  s = Server
  a = Appliance
  r = RAAT
  b = Bridge
 
-PARAMETERS :
+ * Parameters
  m = Scheduling >> {FIFO|RR}
  p = Priority   >> {0-99}
 "
@@ -33,27 +37,27 @@ do
    in
         s)
                 OPT_ROON=${OPTARG}
-                echo "## Option $PROC_ROON selected..."
+                echo "## Option $PROC_ROON selected..." >> $STR_LOG
                 ;;
         a)
                 OPT_APPLIANCE=${OPTARG}
-                echo "## Option $PROC_APPLIANCE selected..."
+                echo "## Option $PROC_APPLIANCE selected..." >> $STR_LOG
                 ;;
         r)
                 OPT_RAAT=${OPTARG}
-                echo "## Option $PROC_RAAT selected..."
+                echo "## Option $PROC_RAAT selected..." >> $STR_LOG
                 ;;
         b)
                 OPT_BRIDGE=${OPTARG}
-                echo "## Option $PROC_BRIDGE selected..."
+                echo "## Option $PROC_BRIDGE selected..." >> $STR_LOG
                 ;;
         m)
                 SCHED_CMD=${OPTARG}
-                echo "## Scheduling $SCHED_CMD  selected..."
+                echo "## Scheduling $SCHED_CMD  selected..." >> $STR_LOG
                 ;;
         p)
                 SCHED_RANGE=${OPTARG}
-                echo "## Priority $SCHED_RANGE selected..."
+                echo "## Priority $SCHED_RANGE selected..." >> $STR_LOG
                 ;;
         h)
                 echo $STR_HELP
@@ -61,47 +65,60 @@ do
                 ;;
  esac
 done
+echo "- - - -" >> $STR_LOG
+
+# # # # # # # # # #
+# Function
+# $1 = Value for Process Name
+# $2 = Value for Log file
+# # # # # # # # # #
+function Get_ProcessStatus () {
+
+        # Check if the process is started
+        if [ -f /proc/$(/usr/bin/pidof $1)/exe ]; then
+                INT_RETURN=1
+                echo "## Service $1 started..." >> $2
+        else
+                INT_RETURN=0
+                echo "## Service $1 not started..." >> $2
+        fi
+
+        # Return value of the flag
+        return $INT_RETURN
+
+}
+
+# Pause
+echo "## Pause 7 secs (to be sure all services are running)..." >> $STR_LOG
+sleep 7
+echo "- - - -" >> $STR_LOG
 
 # Check if the service are running
 FLAG=0
-echo "- - - -"
-while [ $FLAG -le 3 ] ; do
-        # Check if the process is started
-        if [ -f /proc/$(pidof $PROC_ROON)/exe ]; then
-                FLAG=$(($FLAG + 1))
-                echo "## Service $PROC_ROON started..."
-        else
-                echo "## Service $PROC_ROON not started..."
-        fi
-        # Check if the process is started
-        if [ -f /proc/$(pidof $PROC_APPLIANCE)/exe ]; then
-                FLAG=$(($FLAG + 1))
-                echo "## Service $PROC_APPLIANCE started..."
-        else
-                echo "## Service $PROC_APPLIANCE not started..."
-        fi
-        # Check if the process is started
-        if [ -f /proc/$(pidof $PROC_RAAT)/exe ]; then
-                FLAG=$(($FLAG + 1))
-                echo "## Service $PROC_RAAT started"
-        else
-                echo "## Service $PROC_RAAT not started"
-        fi
-        # Check if the process is started
-        if [ -f /proc/$(pidof $PROC_BRIDGE)/exe ]; then
-                FLAG=$(($FLAG + 1))
-                echo "## Service $PROC_BRIDGE started..."
-        else
-                echo "## Service $PROC_BRIDGE not started..."
-        fi
-        # Pause
-        sleep 3
-done
-# Pause
-echo "## Pause 5 secs..."
-sleep 5
-echo "- - - -"
+while (( FLAG < 2 ))
+do
+        # Check for RoonServer
+        Get_ProcessStatus $PROC_ROON $STR_LOG
+        INT_RESULT=$?
+        FLAG=$(($FLAG + $INT_RESULT))
 
+        # Check for RoonAppliance
+        Get_ProcessStatus $PROC_APPLIANCE $STR_LOG
+        INT_RESULT=$?
+        FLAG=$(($FLAG + $INT_RESULT))
+
+        # Check for RAATServer
+        Get_ProcessStatus $PROC_RAAT $STR_LOG
+        INT_RESULT=$?
+        FLAG=$(($FLAG + $INT_RESULT))
+
+        # Check for RoonBridge
+        Get_ProcessStatus $PROC_BRIDGE $STR_LOG
+        INT_RESULT=$?
+        FLAG=$(($FLAG + $INT_RESULT))
+
+done
+echo "- - - -" >> $STR_LOG
 
 # Schedule Round robin
 if [ "$SCHED_CMD" == "RR" ] || [ "$SCHED_CMD" == "rr" ]; then
@@ -113,66 +130,44 @@ if [ "$SCHED_CMD" == "FIFO" ] || [ "$SCHED_CMD" == "fifo" ]; then
         SCHED_CMD="-f"
 fi
 
-# Iteration for RoonServer 
-if [ "$OPT_ROON" == "Y" ] || [ "$OPT_ROON" == "y" ]; then
-        ARR_PID=$(sudo ls /proc/$(pidof $PROC_ROON)/task/)
-        INT_ROWS=0
-        for p_id in $ARR_PID;
-                do
-                        echo "## Process: $(pstree $p_id) "
-                        chrt $SCHED_CMD -p $SCHED_RANGE $p_id
-                        chrt -p $p_id
-                        INT_ROWS=$(($INT_ROWS + 1));
-                done
-        echo "## -----------------------------------------------------------------"
-        echo "## Parent Process [$PROC_ROON] >> $INT_ROWS child process updated..."
-        echo "## -----------------------------------------------------------------"
-fi
+# # # # # # # # # #
+# Function
+# $1 = Value for Option
+# $2 = Value for Parent Process Name
+# $3 = Value for Scheduling
+# $4 = Value for Priority
+# # # # # # # # # # 
+function Set_RealTime () {
+        if [ "$1" == "Y" ] || [ "$1" == "y" ]; then
+                ARR_PID=$(ls /proc/$(pidof $2)/task)
+                INT_ROWS=0
+                for p_id in $ARR_PID;
+                        do
+                                echo "## Process: $(pstree -cpu $p_id) " >> $STR_LOG
+                                chrt $3 -p $4 $p_id >> $STR_LOG
+                                chrt -p $p_id >> $STR_LOG
+                                INT_ROWS=$(($INT_ROWS + 1));
+                        done
+                echo "## -----------------------------------------------------------------" >> $STR_LOG
+                echo "## Parent Process [$2] >> $INT_ROWS child process updated..." >> $STR_LOG
+                echo "## -----------------------------------------------------------------" >> $STR_LOG
+                echo "- - - - " >> $STR_LOG
+        fi
+
+}
+
+
+# Iteration for RoonServer
+Set_RealTime $OPT_ROON $PROC_ROON $SCHED_CMD $SCHED_RANGE
 
 # Iteration for RoonBridge
-if [ "$OPT_BRIDGE" == "Y" ] || [ "$OPT_BRIDGE" == "y" ]; then
-        ARR_PID=$(sudo ls /proc/$(pidof $PROC_BRIDGE)/task/)
-        INT_ROWS=0
-        for p_id in $ARR_PID;
-                do
-                        echo "## Process: $(pstree $p_id) "
-                        chrt $SCHED_CMD -p $SCHED_RANGE $p_id
-                        chrt -p $p_id
-                        INT_ROWS=$(($INT_ROWS + 1));
-                done
-        echo "## -----------------------------------------------------------------"
-        echo "## Parent Process : [$PROC_BRIDGE] >> $INT_ROWS child process updated..."
-        echo "## -----------------------------------------------------------------"
-fi
+Set_RealTime $OPT_BRIDGE $PROC_BRIDGE $SCHED_CMD $SCHED_RANGE
 
 # Iteration for RAATServer
-if [ "$OPT_RAAT" == "Y" ] || [ "$OPT_RAAT" == "y" ]; then
-        ARR_PID=$(sudo ls /proc/$(pidof $PROC_RAAT)/task/)
-        INT_ROWS=0
-        for p_id in $ARR_PID;
-                do
-                        echo "## Process: $(pstree $p_id) "
-                        chrt $SCHED_CMD -p $SCHED_RANGE $p_id
-                        chrt -p $p_id
-                        INT_ROWS=$(($INT_ROWS + 1));
-                done
-        echo "## -----------------------------------------------------------------"
-        echo "## Parent Process : [$PROC_RAAT] >> $INT_ROWS child process updated..."
-        echo "## -----------------------------------------------------------------"
-fi
+Set_RealTime $OPT_RAAT $PROC_RAAT $SCHED_CMD $SCHED_RANGE
 
 # Iteration for RoonAppliance
-if [ "$OPT_APPLIANCE" == "Y" ] || [ "$OPT_APPLIANCE" == "y" ]; then
-        ARR_PID=$(sudo ls /proc/$(pidof $PROC_APPLIANCE)/task/)
-        INT_ROWS=0
-        for p_id in $ARR_PID;
-                do
-                        echo "## Process: $(pstree $p_id) "
-                        chrt $SCHED_CMD -p $SCHED_RANGE $p_id
-                        chrt -p $p_id
-                        INT_ROWS=$(($INT_ROWS + 1));
-                done
-        echo "## -----------------------------------------------------------------"
-        echo "## Parent Process : [$PROC_APPLIANCE] >> $INT_ROWS child process updated..."
-        echo "## -----------------------------------------------------------------"
-fi
+Set_RealTime $OPT_APPLIANCE $PROC_APPLIANCE $SCHED_CMD $SCHED_RANGE
+
+# End
+exit 0
