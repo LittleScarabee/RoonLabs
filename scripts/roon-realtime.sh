@@ -89,8 +89,8 @@ function Get_ProcessStatus () {
 }
 
 # Pause
-echo "## Pause 7 secs (to be sure all services are running)..." >> $STR_LOG
-sleep 7
+echo "## Pause 8 secs (to be sure all services are running)..." >> $STR_LOG
+sleep 8
 echo "- - - -" >> $STR_LOG
 
 # Check if the service are running
