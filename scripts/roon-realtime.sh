@@ -143,7 +143,7 @@ function Set_RealTime () {
                 INT_ROWS=0
                 for p_id in $ARR_PID;
                         do
-                                echo "## Process: $(pstree -cpu $p_id) " >> $STR_LOG
+                                echo "## Process : $(tail /proc/$(pidof $2)/task/$p_id/comm) | PID = $p_id" >> $STR_LOG
                                 chrt $3 -p $4 $p_id >> $STR_LOG
                                 chrt -p $p_id >> $STR_LOG
                                 INT_ROWS=$(($INT_ROWS + 1));
