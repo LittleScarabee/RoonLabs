@@ -19,7 +19,7 @@ How to use this script :
  roon-realtime.sh PARAMETERS OPTIONS
 
 Example for Server: roon-realtime.sh -p 99 -m FIFO -s y -a y -r y 
-Example for Brige: roon-realtime.sh -p 99 -m FIFO -b y -a y -r y 
+Example for Brige: roon-realtime.sh -p 99 -m FIFO -b y -r y 
 
  * Options (At least one of them)
  s = Server
@@ -95,7 +95,14 @@ echo "- - - -" >> $STR_LOG
 
 # Check if the service are running
 FLAG=0
-while (( FLAG < 2 ))
+FLAG_MAX=3
+# Identify the number of service
+if [ "$PROC_BRIDGE" == "Y" ] || [ "$PROC_BRIDGE" == "y" ]; then
+        FLAG_MAX=2
+fi
+
+# Iteration
+while (( FLAG < FLAG_MAX ))
 do
         # Check for RoonServer
         Get_ProcessStatus $PROC_ROON $STR_LOG
