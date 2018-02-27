@@ -90,9 +90,11 @@ if [ "$STEP_LAST" = "STEP_$STEP_ID" ] && [ "$STEP_STATUS" = "0" ]; then
    		STEP_STATUS=1
 		echo "$NOW      STEP_$STEP_ID        $STEP_STATUS">>$FILE_LOG
 		echo "Privilège accordé avec succès ! Votre session va être fermée pour prendre en compte les changements."
-		sleep 3
-		pkill -9 -u $(whoami)
-		exit
+		echo "Privilège accordé avec succès !"
+		. .bash_profile
+		#sleep 3
+		#pkill -9 -u $(whoami)
+		#exit
 	fi
 
 else
