@@ -7,7 +7,7 @@ echo "
 # Name:  Roon Labs RT Audiophile Orientation / Auto-Install
 # 
 # Author  : LittleScarabee
-# Version : 2.1 / 15-AUG-17
+# Version : 2.2 / 08-MAR-18
 #
 # Step 1 - Description :
 #  1 / Give grant access to user (ie: $(whoami))
@@ -86,15 +86,11 @@ if [ "$STEP_LAST" = "STEP_$STEP_ID" ] && [ "$STEP_STATUS" = "0" ]; then
 		exit
 	else
 		# LOG
-        NOW=$(date +"%Y-%m-%d %T")
+        	NOW=$(date +"%Y-%m-%d %T")
    		STEP_STATUS=1
 		echo "$NOW      STEP_$STEP_ID        $STEP_STATUS">>$FILE_LOG
-		echo "Privilège accordé avec succès ! Votre session va être fermée pour prendre en compte les changements."
 		echo "Privilège accordé avec succès !"
-		. .bash_profile
-		#sleep 3
-		#pkill -9 -u $(whoami)
-		#exit
+		source ~/.bash_profile
 	fi
 
 else
