@@ -7,7 +7,7 @@ echo "
 # Name:  Roon Labs RT Audiophile Orientation / Auto-Install
 # 
 # Author  : LittleScarabee
-# Version : 2.2 / 08-MAR-18
+# Version : 2.3 / 21-MAR-18
 #
 # Step 1 - Description :
 #  1 / Give grant access to user (ie: $(whoami))
@@ -71,7 +71,10 @@ if [ "$STEP_LAST" = "STEP_$STEP_ID" ] && [ "$STEP_STATUS" = "0" ]; then
 	
 	echo "Authentification requise en tant que 'ROOT', merci de saisir votre"
 	$(su -c "usermod -aG wheel $(whoami) ; echo '%wheel ALL=(ALL) NOPASSWD: ALL'>>/etc/sudoers")
-		
+	
+	# reload permissions
+	source ~/.bashrc
+	
 	# Script
 	STR_GRP=$(cat /etc/group | grep $(whoami) | grep wheel | awk -F':' '{ print $1; }')
 	# Check group
@@ -90,7 +93,6 @@ if [ "$STEP_LAST" = "STEP_$STEP_ID" ] && [ "$STEP_STATUS" = "0" ]; then
    		STEP_STATUS=1
 		echo "$NOW      STEP_$STEP_ID        $STEP_STATUS">>$FILE_LOG
 		echo "Privilège accordé avec succès !"
-		source ~/.bash_profile
 	fi
 
 else
