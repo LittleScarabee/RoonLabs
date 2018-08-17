@@ -7,7 +7,8 @@ echo "
 # Name	  : Roon Labs RT Audiophile Orientation / Auto-Install
 #
 # Author  : LittleScarabee
-# Version : 1.0 / 2017-07-23
+# Version : 1.1 / 2017-07-23 / Solve issue on the kernel name we have to install
+# Version : 1.0 / 2017-07-23 / Creation
 #
 # Step 2 - Description :
 #  1 / Install kernel MAO CCRMA
@@ -56,8 +57,11 @@ if [ "$STEP_LAST" = "STEP_$STEP_ID" ] && [ "$STEP_STATUS" = "0" ]; then
 	echo ""
 	echo ">>> Authentification requise en tant que 'ROOT', merci de saisir votre"
 	su -c 'rpm -Uvh http://ccrma.stanford.edu/planetccrma/mirror/fedora/linux/planetccrma/$(rpm -E %fedora)/x86_64/planetccrma-repo-1.1-3.fc$(rpm -E %fedora).ccrma.noarch.rpm'
-	sudo dnf info planetccrma-core
-	sudo dnf install -y planetccrma-core
+	#sudo dnf info planetccrma-core
+	#sudo dnf install -y planetccrma-core
+	
+	sudo dnf info kernel-rt
+	sudo dnf install -y kernel-rt
         
 	# LOG
         NOW=$(date +"%Y-%m-%d %T")
